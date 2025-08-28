@@ -1,0 +1,3 @@
+sqlalchemy
+tabulate
+prompt_toolkit
