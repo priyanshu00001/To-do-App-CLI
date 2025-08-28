@@ -2,6 +2,7 @@ from tabulate import tabulate
 from datetime import datetime
 from prompt_toolkit import prompt
 from os import system, name
+import sys
 from database.model import Base,engine,Task,session
 
 
@@ -176,7 +177,7 @@ def app():
         command=command.lower()
 
         if command == "0":
-            break
+           sys.exit()
 
         elif command == "v":
             viewTasks()
