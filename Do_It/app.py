@@ -3,7 +3,7 @@ from tabulate import tabulate
 from datetime import datetime
 from prompt_toolkit import prompt
 from os import system, name
-from database.model import Base, engine, Task, session
+from database.model import Task, session, createDb
 
 
 info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
@@ -162,7 +162,7 @@ def deleteTask(ids):
 
 def app():
     global info
-    Base.metadata.create_all(engine)
+    createDb()
     system("cls" if name == "nt" else "clear")
     print(info)
     viewTasks()

@@ -14,3 +14,7 @@ class Task(Base):
 
 engine = create_engine("sqlite:///database/tasks.db")
 session = Session(engine)
+
+
+def createDb():
+    Base.metadata.create_all(engine)
