@@ -28,6 +28,7 @@ info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
                     OR -1 to delete all tasks
 
                 0 - exit the app
+                
         """
 
 
