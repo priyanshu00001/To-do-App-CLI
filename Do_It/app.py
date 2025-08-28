@@ -15,7 +15,7 @@ info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
             
                 v - view all the tasks
 
-                c - clear the terminal
+                c - clean the Screen
 
                 a - add a new task or tasks by seperating them by "/"
 
