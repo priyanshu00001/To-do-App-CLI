@@ -3,13 +3,10 @@ from tabulate import tabulate
 from datetime import datetime
 from prompt_toolkit import prompt
 from os import system, name
-from database.model import Base,engine,Task,session
+from database.model import Base, engine, Task, session
 
 
-
-
-
-info = '''\n\t\t\t\t<--------------------- || DO-IT || --------------------->
+info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
 
 
           
@@ -31,28 +28,34 @@ info = '''\n\t\t\t\t<--------------------- || DO-IT || --------------------->
                     OR -1 to delete all tasks
 
                 0 - exit the app
-        '''
-
-
-
+        """
 
 
 def viewTasks():
     print()
 
     tasks = session.query(Task).all()
-    data = [(t.taskId, t.task, t.time.strftime('%I:%M %p  %d-%m-%Y'), "✓" if t.is_done else "") for t in tasks]
+    data = [
+        (
+            t.taskId,
+            t.task,
+            t.time.strftime("%I:%M %p  %d-%m-%Y"),
+            "✓" if t.is_done else "",
+        )
+        for t in tasks
+    ]
 
-    print(tabulate(data, headers=["ID", "Task", "Added/modified On"," "], tablefmt="psql"))
+    print(
+        tabulate(
+            data, headers=["ID", "Task", "Added/modified On", " "], tablefmt="psql"
+        )
+    )
     print()
 
 
-
-
-
-def addTask(s:str):
-    s=s.strip().split("/")
-    task=[Task(task=t.strip(), time=datetime.now()) for t in s if t.strip()]
+def addTask(s: str):
+    s = s.strip().split("/")
+    task = [Task(task=t.strip(), time=datetime.now()) for t in s if t.strip()]
 
     if any(task):
         try:
@@ -71,42 +74,43 @@ def addTask(s:str):
         print("\n\033[31mNo task was found to Add\033[0m\n")
 
 
-
-
-
 def markTasks(ids):
-    taskIds=[int(id) for id in ids.split(" ") if id.lstrip('-').isdigit() or id.lstrip('+').isdigit()]
-    done=[]
-    undone=[]
+    taskIds = [
+        int(id)
+        for id in ids.split(" ")
+        if id.lstrip("-").isdigit() or id.lstrip("+").isdigit()
+    ]
+    done = []
+    undone = []
 
     for id in taskIds:
-        if id<0 :
-            undone.append(session.get(Task,abs(id)))
+        if id < 0:
+            undone.append(session.get(Task, abs(id)))
         else:
-            done.append(session.get(Task,id))
+            done.append(session.get(Task, id))
 
     if any(done):
-        try:      
+        try:
             for d in done:
                 if d:
-                    d.is_done=True
+                    d.is_done = True
 
         except Exception as e:
             session.rollback()
             print("\n\033[31mSomething went wrong\033[0m\n")
-            
+
         else:
             session.commit()
             print("\n\033[32mTask marked done\033[0m\n")
 
     else:
         print("\n\033[31mNo Task was found for marking done\033[0m\n")
-    
+
     if any(undone):
-        try:      
+        try:
             for d in undone:
                 if d:
-                    d.is_done=False
+                    d.is_done = False
 
         except Exception as e:
             session.rollback()
@@ -120,13 +124,10 @@ def markTasks(ids):
         print("\n\033[31mNo Task was found for marking undone\033[0m\n")
 
 
-
-
-
-def editTask(t,s:str):
+def editTask(t, s: str):
     try:
-        t.task=s.strip()
-        t.time=datetime.now()
+        t.task = s.strip()
+        t.time = datetime.now()
 
     except Exception as e:
         session.rollback()
@@ -137,11 +138,8 @@ def editTask(t,s:str):
         print("\n\033[32mTask updated\033[0m\n")
 
 
-
-
-
 def deleteTask(ids):
-    tasks=[session.get(Task,id.strip()) for id in ids.split(" ")]
+    tasks = [session.get(Task, id.strip()) for id in ids.split(" ")]
 
     if any(tasks):
         try:
@@ -161,9 +159,6 @@ def deleteTask(ids):
         print("\n\033[31mNo task was found\033[0m\n")
 
 
-
-
-
 def app():
     global info
     Base.metadata.create_all(engine)
@@ -171,44 +166,44 @@ def app():
     print(info)
     viewTasks()
     print()
-    
+
     while True:
-        command=input(">>> ")
-        command=command.lower()
+        command = input(">>> ")
+        command = command.lower()
 
         if command == "0":
-           sys.exit()
+            sys.exit()
 
         elif command == "v":
             viewTasks()
-        
+
         elif command == "c":
             system("cls" if name == "nt" else "clear")
             print(info)
             viewTasks()
 
         elif command == "a":
-            t=input("\nEnter the Task : ")
+            t = input("\nEnter the Task : ")
             addTask(t)
 
         elif command == "m":
-            ids=input("\nEnter ID to mark done/undone : ")
+            ids = input("\nEnter ID to mark done/undone : ")
             markTasks(ids)
 
         elif command == "e":
-            i=input("\nEnter ID to edit : ")
-            t=session.get(Task,i)
-            
+            i = input("\nEnter ID to edit : ")
+            t = session.get(Task, i)
+
             if t:
-                s=prompt("\nEdit task : ",default=t.task)
-                editTask(t,s)
+                s = prompt("\nEdit task : ", default=t.task)
+                editTask(t, s)
             else:
                 print("\n\033[31mNo task was found\033[0m\n")
 
         elif command == "d":
-            id=input("\nEnter ID to delete: ")
+            id = input("\nEnter ID to delete: ")
 
-            if id.strip()=="-1":
+            if id.strip() == "-1":
                 session.query(Task).delete()
                 session.commit()
                 print("\n\033[31mAll Tasks deleted\033[0m\n")
@@ -216,10 +211,5 @@ def app():
                 deleteTask(id)
 
 
-
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     app()
-
-
