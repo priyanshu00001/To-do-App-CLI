@@ -1,4 +1,4 @@
-# <img src="./Do_It/icon.png" alt="Do-It" width="80" height="80"> <br>&nbsp;Do-It
+# <img src="./Do_It/icon.png" alt="Do-It" width="80" height="80"> <br>Do-It
 
 #### A simple to use To-do application ( CLI )
 <hr>
