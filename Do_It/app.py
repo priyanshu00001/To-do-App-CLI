@@ -34,14 +34,13 @@ info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
 
 def viewTasks():
     print()
-
     tasks = session.query(Task).all()
     data = [
         (
             t.taskId,
             t.task,
             t.time.strftime("%I:%M %p  %d-%m-%Y"),
-            "✓" if t.is_done else "",
+            "\033[32m✓\033[0m" if t.is_done else "",
         )
         for t in tasks
     ]

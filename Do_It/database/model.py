@@ -1,3 +1,5 @@
+import os
+import sys
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, Session
 
@@ -12,7 +14,15 @@ class Task(Base):
     is_done = Column(Boolean, default=False)
 
 
-engine = create_engine("sqlite:///database/tasks.db")
+BASE_DIR = (
+    os.path.dirname(sys.executable)
+    if getattr(sys, "frozen", False)
+    else os.path.dirname(os.path.abspath(__file__))
+)
+
+DB_PATH = os.path.join(BASE_DIR, "tasks.db")
+
+engine = create_engine(f"sqlite:///{DB_PATH}")
 session = Session(engine)
 
 
