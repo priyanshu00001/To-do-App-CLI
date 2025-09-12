@@ -6,28 +6,27 @@ from os import system, name
 from database.model import Task, session, createDb
 
 
-info = """\n\t\t\t\t<--------------------- || DO-IT || --------------------->
+info = """\n\t\t\t\t\033[33m<--------------------- || DO-IT || --------------------->\033[0m
 
 
           
-            How to use:
+            \033[35mHow to use:\033[0m
           
             
-                v - view all the tasks
+                \033[36mv - view all the tasks
 
                 c - clean the Screen
 
-                a - add a new task or tasks by seperating them by "/"
+                a - add a new task or tasks by seperating them by " ` "
 
-                m - mark a task done by id Or Ids seperating them by space
-                    AND undone it by adding "-" sign at the begining
+                m - mark a task done/undone by id Or Ids seperating them by space
 
                 e - edit a task by ID
 
                 d - delete a task by id OR Ids by seperating them by space
                     OR -1 to delete all tasks
 
-                0 - exit the app
+                0 - exit the app\033[0m
                 
         """
 
@@ -47,14 +46,14 @@ def viewTasks():
 
     print(
         tabulate(
-            data, headers=["ID", "Task", "Added/modified On", " "], tablefmt="psql"
+            data, headers=["ID", "Task", "Added/Modified", " "], tablefmt="pretty"
         )
     )
     print()
 
 
 def addTask(s: str):
-    s = s.strip().split("/")
+    s = s.strip().split("`")
     task = [Task(task=t.strip(), time=datetime.now()) for t in s if t.strip()]
 
     if any(task):
@@ -78,22 +77,16 @@ def markTasks(ids):
     taskIds = [
         int(id)
         for id in ids.split(" ")
-        if id.lstrip("-").isdigit() or id.lstrip("+").isdigit()
+        if id.strip().isdigit()
     ]
-    done = []
-    undone = []
 
-    for id in taskIds:
-        if id < 0:
-            undone.append(session.get(Task, abs(id)))
-        else:
-            done.append(session.get(Task, id))
+    marking=[session.get(Task, abs(id)) for id in taskIds]
 
-    if any(done):
+    if any(marking):
         try:
-            for d in done:
-                if d:
-                    d.is_done = True
+            for m in marking:
+                if m:
+                    m.is_done = not m.is_done
 
         except Exception as e:
             session.rollback()
@@ -101,27 +94,10 @@ def markTasks(ids):
 
         else:
             session.commit()
-            print("\n\033[32mTask marked done\033[0m\n")
+            print("\n\033[32mTask marked\033[0m\n")
 
     else:
-        print("\n\033[31mNo Task was found for marking done\033[0m\n")
-
-    if any(undone):
-        try:
-            for d in undone:
-                if d:
-                    d.is_done = False
-
-        except Exception as e:
-            session.rollback()
-            print("\n\033[31mSomething went wrong\033[0m\n")
-
-        else:
-            session.commit()
-            print("\n\033[32mTask marked undone\033[0m\n")
-
-    else:
-        print("\n\033[31mNo Task was found for marking undone\033[0m\n")
+        print("\n\033[31mNo Task was found for marking\033[0m\n")
 
 
 def editTask(t, s: str):
@@ -168,7 +144,7 @@ def app():
     print()
 
     while True:
-        command = input(">>> ")
+        command = input("\033[33m>>> \033[0m")
         command = command.lower()
 
         if command == "0":
