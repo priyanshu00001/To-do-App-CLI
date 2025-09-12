@@ -17,9 +17,9 @@ info = """\n\t\t\t\t\033[33m<--------------------- || DO-IT || -----------------
 
                 c - clean the Screen
 
-                a - add a new task or tasks by seperating them by " ` "
+                a - add a new task OR tasks by seperating them by " ` "
 
-                m - mark a task done/undone by id Or Ids seperating them by space
+                m - mark a task done/undone by id OR Ids seperating them by space
 
                 e - edit a task by ID
 
@@ -45,9 +45,7 @@ def viewTasks():
     ]
 
     print(
-        tabulate(
-            data, headers=["ID", "Task", "Added/Modified", " "], tablefmt="pretty"
-        )
+        tabulate(data, headers=["ID", "Task", "Added/Modified", " "], tablefmt="pretty")
     )
     print()
 
@@ -74,13 +72,9 @@ def addTask(s: str):
 
 
 def markTasks(ids):
-    taskIds = [
-        int(id)
-        for id in ids.split(" ")
-        if id.strip().isdigit()
-    ]
+    taskIds = [int(id) for id in ids.split(" ") if id.strip().isdigit()]
 
-    marking=[session.get(Task, abs(id)) for id in taskIds]
+    marking = [session.get(Task, abs(id)) for id in taskIds]
 
     if any(marking):
         try:
@@ -159,25 +153,25 @@ def app():
             viewTasks()
 
         elif command == "a":
-            t = input("\nEnter the Task : ")
+            t = input("\n\033[34mEnter the Task\033[0m : \033[0m")
             addTask(t)
 
         elif command == "m":
-            ids = input("\nEnter ID to mark done/undone : ")
+            ids = input("\n\033[34mEnter ID to mark done/undone : \033[0m")
             markTasks(ids)
 
         elif command == "e":
-            i = input("\nEnter ID to edit : ")
+            i = input("\n\033[34mEnter ID to edit : \033[0m")
             t = session.get(Task, i)
 
             if t:
-                s = prompt("\nEdit task : ", default=t.task)
+                s = prompt("\n\033[34mEdit task : \033[0m", default=t.task)
                 editTask(t, s)
             else:
                 print("\n\033[31mNo task was found\033[0m\n")
 
         elif command == "d":
-            id = input("\nEnter ID to delete: ")
+            id = input("\n\033[34mEnter ID to delete: \033[0m")
 
             if id.strip() == "-1":
                 session.query(Task).delete()
