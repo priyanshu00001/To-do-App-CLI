@@ -45,7 +45,7 @@ def viewTasks():
     ]
 
     print(
-        tabulate(data, headers=["ID", "Task", "Added/Modified", " "], tablefmt="pretty")
+        tabulate(data, headers=["ID", "Task", "Added/Modified", " "], tablefmt="psql")
     )
     print()
 
@@ -153,25 +153,25 @@ def app():
             viewTasks()
 
         elif command == "a":
-            t = input("\n\033[34mEnter the Task\033[0m : \033[0m")
+            t = input("\n\033[36mEnter new Task : \033[0m")
             addTask(t)
 
         elif command == "m":
-            ids = input("\n\033[34mEnter ID to mark done/undone : \033[0m")
+            ids = input("\n\033[36mEnter ID to mark done/undone : \033[0m")
             markTasks(ids)
 
         elif command == "e":
-            i = input("\n\033[34mEnter ID to edit : \033[0m")
+            i = input("\n\033[36mEnter ID to edit : \033[0m")
             t = session.get(Task, i)
 
             if t:
-                s = prompt("\n\033[34mEdit task : \033[0m", default=t.task)
+                s = prompt("\n\033[36mEdit task : \033[0m", default=t.task)
                 editTask(t, s)
             else:
                 print("\n\033[31mNo task was found\033[0m\n")
 
         elif command == "d":
-            id = input("\n\033[34mEnter ID to delete: \033[0m")
+            id = input("\n\033[36mEnter ID to delete: \033[0m")
 
             if id.strip() == "-1":
                 session.query(Task).delete()
