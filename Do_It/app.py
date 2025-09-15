@@ -165,7 +165,7 @@ def app():
             t = session.get(Task, i)
 
             if t:
-                s = prompt("\n\033[36mEdit task : \033[0m", default=t.task)
+                s = prompt("\nEdit task : ", default=t.task)
                 editTask(t, s)
             else:
                 print("\n\033[31mNo task was found\033[0m\n")
