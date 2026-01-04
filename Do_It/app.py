@@ -42,7 +42,23 @@ def viewTasks():
 
 def addTask(s: str):
     s = s.strip().split("`")
-    task = [Task(task=t.strip(), time=datetime.now()) for t in s if t.strip()]
+    task=[]
+    for t in s:
+        t=t.strip()
+        if len(t)>35:
+            formated_t=''
+            pre=0
+            for i in range(35,len(t),35):
+                dash="" if t[i]==" " else "-"
+                formated_t+=t[pre:i]+dash+"\n"
+                pre=i
+
+            formated_t+=t[pre:]
+            formated_t=formated_t[:-1] if formated_t[-1]=="\n" else formated_t
+            task.append(Task(task=formated_t, time=datetime.now()))
+
+        elif len(t)>0:
+            task.append(Task(task=t, time=datetime.now()))
 
     if any(task):
         try:
@@ -92,7 +108,7 @@ def editTask(id):
         if t:
             s = prompt("\nEdit task : ", default=t.task)
         else:
-            return "\n\033[91mNo task was found\033[0m\n"
+            return "\n\033[91mNo task was found for editing\033[0m\n"
         t.task = s.strip()
         t.time = datetime.now()
         t.is_done=False
@@ -129,7 +145,7 @@ def deleteTask(ids):
             return "\n\033[91mTask deleted\033[0m\n"
 
     else:
-        return "\n\033[91mNo task was found\033[0m\n"
+        return "\n\033[91mNo task was found for deletion\033[0m\n"
 
 
 def app():
