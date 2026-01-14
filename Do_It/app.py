@@ -106,7 +106,7 @@ def editTask(id):
         t = session.get(Task, id)
 
         if t:
-            s = prompt("\nEdit task : ", default=t.task)
+            s = prompt("\nEdit task : ", default=t.task.replace("-\n","").replace("\n",""))
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
         ts=s.strip()
