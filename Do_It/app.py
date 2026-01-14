@@ -133,7 +133,7 @@ def editTask(id):
 
     except Exception as e:
         session.rollback()
-        return f"\n\033[91mError : Please Enter a valid ID{e}\033[0m\n"
+        return "\n\033[91mError : Please Enter a valid ID\033[0m\n"
         
 
     else:
