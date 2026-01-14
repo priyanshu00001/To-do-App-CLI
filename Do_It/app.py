@@ -109,13 +109,32 @@ def editTask(id):
             s = prompt("\nEdit task : ", default=t.task)
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
-        t.task = s.strip()
+        ts=s.strip()
+        if len(ts)>35:
+            formated_t=''
+            pre=0
+            for i in range(35,len(ts),35):
+                dash="" if ts[i]==" " else "-"
+                formated_t+=ts[pre:i]+dash+"\n"
+                pre=i
+
+            formated_t+=ts[pre:]
+            formated_t=formated_t[:-1] if formated_t[-1]=="\n" else formated_t
+
+            t.task = formated_t
+        elif len(ts)>0:
+            t.task = ts
+        
+        else:
+            return "\n\033[91mTask can NOT be EMPTY\033[0m\n"
+
         t.time = datetime.now()
         t.is_done=False
 
     except Exception as e:
         session.rollback()
-        return "\n\033[91mError : Please Enter a valid ID\033[0m\n"
+        return f"\n\033[91mError : Please Enter a valid ID{e}\033[0m\n"
+        
 
     else:
         session.commit()
