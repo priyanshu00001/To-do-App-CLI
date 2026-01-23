@@ -12,6 +12,7 @@ class Task(Base):
     task = Column(String)
     time = Column(DateTime)
     is_done = Column(Boolean, default=False)
+    comment = Column(String, default="")
 
 
 BASE_DIR = (
