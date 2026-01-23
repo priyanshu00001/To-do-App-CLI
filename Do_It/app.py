@@ -49,7 +49,7 @@ def viewTasks():
 def addTask(s: str):
     s = s.strip().split("`")
     task = []
-    
+
     for t in s:
         t = t.strip()
 
@@ -63,17 +63,17 @@ def addTask(s: str):
                 formated_t += st + dash + "\n" if st[0] != " " else st[1:] + dash + "\n"
                 pre = i
 
-            formated_t += t[pre:]
+            formated_t += t[pre:] + "\n\0"
             task.append(Task(task=formated_t, time=datetime.now()))
 
         elif len(t) > 0:
-            task.append(Task(task=t, time=datetime.now()))
+            task.append(Task(task=t+"\n\0", time=datetime.now()))
 
     if any(task):
         try:
             for t in task:
                 if t:
-                    session.add(t + "\n\0")
+                    session.add(t)
 
         except Exception as e:
             session.rollback()
