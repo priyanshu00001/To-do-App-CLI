@@ -4,3 +4,4 @@ Do_It/app.spec
 Do_It/database/tasks.db
 Do_It/database/__pycache__/
 Do_It/Do-It.spec
+Do_It/doit.spec
