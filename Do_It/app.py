@@ -49,11 +49,14 @@ def viewTasks():
 def addTask(s: str):
     s = s.strip().split("`")
     task = []
+    
     for t in s:
         t = t.strip()
+
         if len(t) > 35:
             formated_t = ""
             pre = 0
+
             for i in range(35, len(t), 35):
                 dash = "" if t[i] == " " else "-"
                 st = t[pre:i]
@@ -61,7 +64,6 @@ def addTask(s: str):
                 pre = i
 
             formated_t += t[pre:]
-            formated_t = formated_t[:-1] if formated_t[-1] == "\n" else formated_t
             task.append(Task(task=formated_t, time=datetime.now()))
 
         elif len(t) > 0:
@@ -71,7 +73,7 @@ def addTask(s: str):
         try:
             for t in task:
                 if t:
-                    session.add(t)
+                    session.add(t + "\n\0")
 
         except Exception as e:
             session.rollback()
@@ -80,6 +82,7 @@ def addTask(s: str):
         else:
             session.commit()
             return f"\n\033[92m{len(task)} - Tasks Added\033[0m\n"
+
     else:
         return "\n\033[91mNo task was found to Add\033[0m\n"
 
@@ -114,13 +117,15 @@ def editTask(id):
 
         if t:
             print("\n\033[92mEdit Task : \033[0m", end="")
-            s = prompt(default=t.task.replace("-\n", "").replace("\n", ""))
+            s = prompt(default=t.task.replace("-\n", "").replace("\n", "")[:-1])
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
+
         ts = s.strip()
         if len(ts) > 35:
             formated_t = ""
             pre = 0
+
             for i in range(35, len(ts), 35):
                 dash = "" if ts[i] == " " else "-"
                 st = ts[pre:i]
@@ -128,11 +133,10 @@ def editTask(id):
                 pre = i
 
             formated_t += ts[pre:]
-            formated_t = formated_t[:-1] if formated_t[-1] == "\n" else formated_t
+            t.task = formated_t + "\n\0"
 
-            t.task = formated_t
         elif len(ts) > 0:
-            t.task = ts
+            t.task = ts + "\n\0"
 
         else:
             return "\n\033[91mTask can NOT be EMPTY\033[0m\n"
@@ -156,13 +160,15 @@ def editComment(id):
 
         if t:
             print("\n\033[92mEdit Comment : \033[0m", end="")
-            s = prompt(default=t.comment.replace("-\n", "").replace("\n", ""))
+            s = prompt(default=t.comment.replace("-\n", "").replace("\n", "")[:-1])
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
+
         ts = s.strip()
         if len(ts) > 15:
             formated_t = ""
             pre = 0
+
             for i in range(15, len(ts), 15):
                 dash = "" if ts[i] == " " else "-"
                 st = ts[pre:i]
@@ -170,12 +176,10 @@ def editComment(id):
                 pre = i
 
             formated_t += ts[pre:]
-            formated_t = formated_t[:-1] if formated_t[-1] == "\n" else formated_t
-
-            t.comment = formated_t
+            t.comment = formated_t + "\n\0"
 
         else:
-            t.comment = ts
+            t.comment = ts + "\n\0"
 
     except Exception as e:
         session.rollback()
@@ -215,6 +219,7 @@ def deleteTask(ids):
 def app():
     global info
     createDb()
+
     msg = "\nJUST DO IT !!\n"
     print()
 
