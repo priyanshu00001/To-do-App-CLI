@@ -2,11 +2,12 @@ import sys
 from tabulate import tabulate
 from datetime import datetime
 from prompt_toolkit import prompt
+from prompt_toolkit.formatted_text import ANSI
 from os import system, name
 from database.model import Task, session, createDb
 
 
-info = """\n\t\t\033[93m<--------------------- || DO-IT || --------------------->\033[0m
+info = """\n\t\t\033[93m<====================== || DO-IT || ======================>\033[0m
           
 
         \033[95mHow to use:\033[0m
@@ -40,7 +41,7 @@ def viewTasks():
         tabulate(
             data,
             headers=["ID", "Task", "Added/Modified", "Comment", ""],
-            tablefmt="psql",
+            tablefmt="heavy_grid",
         )
     )
     print()
@@ -58,16 +59,17 @@ def addTask(s: str):
             pre = 0
 
             for i in range(35, len(t), 35):
-                dash = "" if t[i] == " " else "-"
+                dash = "-" if t[i] != " " and t[i-1] !=" " else ""
                 st = t[pre:i]
                 formated_t += st + dash + "\n" if st[0] != " " else st[1:] + dash + "\n"
                 pre = i
 
-            formated_t += t[pre:] + "\n\0"
+            st = t[pre:]
+            formated_t += st if st[0] != " " else st[1:]
             task.append(Task(task=formated_t, time=datetime.now()))
 
         elif len(t) > 0:
-            task.append(Task(task=t+"\n\0", time=datetime.now()))
+            task.append(Task(task=t, time=datetime.now()))
 
     if any(task):
         try:
@@ -116,8 +118,10 @@ def editTask(id):
         t = session.get(Task, id)
 
         if t:
-            print("\n\033[92mEdit Task : \033[0m", end="")
-            s = prompt(default=t.task.replace("-\n", "").replace("\n", "")[:-1])
+            s = prompt(
+                ANSI("\n\033[92mEdit Task :\033[0m "),
+                default=t.task.replace("-\n", "").replace("\n", " "),
+            )
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
 
@@ -127,16 +131,17 @@ def editTask(id):
             pre = 0
 
             for i in range(35, len(ts), 35):
-                dash = "" if ts[i] == " " else "-"
+                dash = "-" if ts[i] != " " and ts[i-1] !=" " else ""
                 st = ts[pre:i]
                 formated_t += st + dash + "\n" if st[0] != " " else st[1:] + dash + "\n"
                 pre = i
 
-            formated_t += ts[pre:]
-            t.task = formated_t + "\n\0"
+            st = ts[pre:]
+            formated_t += st if st[0] != " " else st[1:]
+            t.task = formated_t
 
         elif len(ts) > 0:
-            t.task = ts + "\n\0"
+            t.task = ts
 
         else:
             return "\n\033[91mTask can NOT be EMPTY\033[0m\n"
@@ -159,8 +164,10 @@ def editComment(id):
         t = session.get(Task, id)
 
         if t:
-            print("\n\033[92mEdit Comment : \033[0m", end="")
-            s = prompt(default=t.comment.replace("-\n", "").replace("\n", "")[:-1])
+           s = prompt(
+                ANSI("\n\033[92mEdit Comment :\033[0m "),
+                default=t.comment.replace("-\n", "").replace("\n", " "),
+            )
         else:
             return "\n\033[91mNo task was found for editing\033[0m\n"
 
@@ -170,16 +177,17 @@ def editComment(id):
             pre = 0
 
             for i in range(15, len(ts), 15):
-                dash = "" if ts[i] == " " else "-"
+                dash = "-" if ts[i] != " " and ts[i-1] !=" " else ""
                 st = ts[pre:i]
                 formated_t += st + dash + "\n" if st[0] != " " else st[1:] + dash + "\n"
                 pre = i
 
-            formated_t += ts[pre:]
-            t.comment = formated_t + "\n\0"
+            st = ts[pre:]
+            formated_t += st if st[0] != " " else st[1:]
+            t.comment = formated_t
 
         else:
-            t.comment = ts + "\n\0"
+            t.comment = ts
 
     except Exception as e:
         session.rollback()
